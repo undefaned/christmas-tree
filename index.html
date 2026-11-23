@@ -35,7 +35,13 @@
         100% { background-position: 0% 200%; }
       }
     </style>
-    <script type="module" crossorigin src="./assets/index-bd91887a.js"></script>
+    <script>
+      // clicking the scene makes the photos burst outward and settle back
+      document.addEventListener("pointerdown", function (e) {
+        if (e.target && e.target.tagName === "CANVAS") window.__scatterAt = performance.now();
+      }, true);
+    </script>
+    <script type="module" crossorigin src="./assets/index-05c8ef41.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-BeE7YxDE.css">
   </head>
   <body>
