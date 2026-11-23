@@ -1,4 +1,91 @@
-<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>星愿圣诞树</title><link rel="stylesheet" href="gallery.css"><style>
-*{box-sizing:border-box}body{margin:0;background:#050914;color:#f6deb0;font-family:Georgia,'SimSun',serif;overflow:hidden}canvas{position:fixed;inset:0;touch-action:none;background:radial-gradient(ellipse at 50% 60%,#142323,#080e1b 45%,#040710)}header{position:absolute;top:5vh;width:100%;text-align:center;pointer-events:none}small{font:10px Arial;letter-spacing:4px;color:#aa987a}h1{font-size:clamp(38px,5vw,66px);font-weight:400;font-style:italic;margin:15px 0;text-shadow:0 0 35px #dba95c55}header p{font-size:14px;letter-spacing:4px}#count{font:12px Arial;color:#aca395;letter-spacing:2px}nav{position:absolute;bottom:100px;width:100%;display:flex;justify-content:center;gap:10px}button{border:1px solid #bca57055;border-radius:24px;background:#121b28cc;color:#ebd4aa;padding:12px 18px;cursor:pointer;font-size:14px}button:hover,button:focus-visible{background:#55462c;outline:1px solid #dec28c}footer{position:absolute;bottom:25px;width:100%;text-align:center;padding:0 15px}footer p{font-size:14px;letter-spacing:2px}footer span{font-size:11px;color:#8d95a0}dialog{width:min(400px,90vw);border:1px solid #887148;border-radius:16px;background:#101a29;color:#e8d4ad;padding:25px}dialog::backdrop{background:#000a}textarea{width:100%;padding:12px;margin:15px 0;background:#070e19;color:#ffe6b4;border:1px solid #665941;font-size:16px}@media(max-width:600px){button{padding:10px;font-size:12px}nav{gap:6px}header p{letter-spacing:2px}footer p{font-size:12px}}
-</style><canvas aria-label="金色粒子圣诞树"></canvas><header><small>A LITTLE MAGIC, JUST FOR YOU</small><h1>Merry Christmas</h1><p>愿今夜的星光，落在你身旁。</p><div id="count"></div></header><nav><button id="snow" aria-pressed="true">❄ 飘雪</button><button id="rotate" aria-pressed="true">↻ 旋转</button><button id="wish">♡ 写下心愿</button></nav><footer><p id="greeting">把平凡的日子，点缀成闪闪发光的回忆。</p><span>拖动旋转 · 滚轮或双指放大展开照片 · 点击照片查看</span></footer><dialog><form method="dialog"><h2>寄给冬天的心愿</h2><label for="message">让这棵树替你珍藏一句祝福</label><textarea id="message" maxlength="80" rows="3"></textarea><button value="cancel">取消</button> <button value="save">点亮心愿 ✧</button></form></dialog><script src="app.js"></script><script src="photos.js"></script><script src="gallery.js"></script></html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>璀璨圣诞树 · Merry Christmas</title>
+<meta name="description" content="金色粒子圣诞树，拖动旋转、缩放展开回忆相册。" />
+<link rel="stylesheet" href="styles.css" />
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/three.module.js",
+    "three/addons/": "./vendor/three/addons/"
+  }
+}
+</script>
+</head>
+<body>
+<canvas id="scene" aria-label="金色粒子圣诞树"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+<div class="aurora" aria-hidden="true"></div>
 
+<header class="hero">
+  <small>A LITTLE MAGIC, JUST FOR YOU</small>
+  <h1>Merry Christmas</h1>
+  <p class="sub">愿今夜的星光，落在你身旁。</p>
+  <div id="countdown" class="countdown">距圣诞节 · · ·</div>
+  <div id="greeting" class="greeting">把平凡的日子，点缀成闪闪发光的回忆。</div>
+</header>
+
+<div id="hint" class="hint">拖动旋转 · 滚轮 / 双指缩放 · 放大后点击照片查看</div>
+
+<nav class="dock" aria-label="场景控制">
+  <button id="btnSnow" class="chip" aria-pressed="true">❄ 飘雪</button>
+  <button id="btnRotate" class="chip" aria-pressed="true">↻ 旋转</button>
+  <button id="btnMusic" class="chip" aria-pressed="false">♫ 音乐</button>
+  <button id="btnAlbum" class="chip">▦ 回忆相册</button>
+  <button id="btnWish" class="chip">♡ 写下心愿</button>
+</nav>
+
+<footer class="credit">拖动旋转 · 滚轮或双指放大展开照片 · 点击照片查看</footer>
+
+<div id="loader" class="loader">
+  <div class="loader-inner">
+    <div class="tree-mark" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <p class="loader-title">点亮星光</p>
+    <p id="loaderText" class="loader-sub">载入回忆 0 / 0</p>
+    <div class="bar"><i id="loaderBar"></i></div>
+  </div>
+</div>
+
+<dialog id="wishDialog" class="panel">
+  <form method="dialog" id="wishForm">
+    <h2>寄给冬天的心愿</h2>
+    <p class="panel-sub">让这棵树替你珍藏一句祝福</p>
+    <textarea id="wishInput" maxlength="80" rows="3" placeholder="写下一句想说的话…"></textarea>
+    <div class="panel-actions">
+      <button value="cancel" class="ghost">取消</button>
+      <button value="save" class="primary">点亮心愿 ✧</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="albumDialog" class="panel album-panel">
+  <div class="album-head">
+    <div>
+      <h2>回忆相册</h2>
+      <p class="panel-sub">共 <span id="albumCount">0</span> 张 · 点击任意一张查看大图</p>
+    </div>
+    <button class="close-btn" data-close="albumDialog" aria-label="关闭">✕</button>
+  </div>
+  <div id="albumGrid" class="album-grid"></div>
+</dialog>
+
+<dialog id="lightbox" class="lightbox">
+  <div class="lightbox-inner">
+    <button class="close-btn lb-close" data-close="lightbox" aria-label="关闭">✕</button>
+    <img id="lbImg" alt="回忆照片" />
+    <div class="lb-bar">
+      <button id="lbPrev" class="round-btn" aria-label="上一张">‹</button>
+      <span id="lbCount" class="lb-count">1 / 1</span>
+      <button id="lbNext" class="round-btn" aria-label="下一张">›</button>
+    </div>
+  </div>
+</dialog>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
