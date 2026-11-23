@@ -35,16 +35,64 @@
         100% { background-position: 0% 200%; }
       }
     </style>
-    <script>
-      // clicking the scene makes the photos burst outward and settle back
-      document.addEventListener("pointerdown", function (e) {
-        if (e.target && e.target.tagName === "CANVAS") window.__scatterAt = performance.now();
-      }, true);
-    </script>
-    <script type="module" crossorigin src="./assets/index-40a6e902.js"></script>
+    <script type="module" crossorigin src="./assets/index-4cbe4775.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-BeE7YxDE.css">
   </head>
   <body>
     <div id="root"></div>
-  </body>
+  
+<div id="photoViewer" aria-hidden="true">
+  <img id="photoViewerImg" alt="照片" />
+  <button id="photoViewerClose" type="button" aria-label="关闭">✕</button>
+</div>
+<style>
+  #photoViewer{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:3vh 3vw;background:rgba(2,4,10,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  #photoViewer.open{display:flex}
+  #photoViewer img{max-width:92vw;max-height:88vh;border:1px solid rgba(232,196,131,.6);border-radius:10px;box-shadow:0 30px 90px rgba(0,0,0,.85);background:#070b18}
+  #photoViewerClose{position:absolute;top:18px;right:20px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(232,196,131,.4);background:rgba(10,15,25,.72);color:#f0d9b0;font-size:18px;line-height:1;cursor:pointer}
+  #photoViewerClose:hover{background:rgba(90,68,38,.6)}
+</style>
+<script>
+(function(){
+  var viewer=document.getElementById('photoViewer'),vimg=document.getElementById('photoViewerImg'),vclose=document.getElementById('photoViewerClose');
+  function openViewer(u){
+    if(!u)return;
+    var full=u.indexOf('photos/square/')===0?u.replace('photos/square/','photos/'):u;
+    vimg.onerror=function(){vimg.onerror=null;vimg.src=u;};
+    vimg.src=full;
+    viewer.classList.add('open');viewer.setAttribute('aria-hidden','false');
+  }
+  function closeViewer(){viewer.classList.remove('open');viewer.setAttribute('aria-hidden','true');vimg.removeAttribute('src');}
+  window.__openPhotoViewer=openViewer;
+  vclose.addEventListener('click',closeViewer);
+  viewer.addEventListener('click',function(e){if(e.target===viewer)closeViewer();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeViewer();});
+
+  // album thumbnails also open the large view
+  document.addEventListener('click',function(e){
+    var t=e.target;
+    if(t&&t.tagName==='IMG'&&t.id!=='photoViewerImg'){
+      var u=t.currentSrc||t.src||'';
+      if(u.indexOf('photos/square/')>=0||u.indexOf('blob:')===0){e.preventDefault();e.stopPropagation();openViewer(u);}
+    }
+  },true);
+
+  var dx=0,dy=0,dt=0;
+  document.addEventListener('pointerdown',function(e){
+    if(e.pointerType==='mouse')window.__mouseGesture=true;
+    if(e.target&&e.target.tagName==='CANVAS'){dx=e.clientX;dy=e.clientY;dt=performance.now();}
+  },true);
+  document.addEventListener('pointerup',function(e){
+    if(e.pointerType==='mouse')window.__mouseGesture=false;
+    if(!(e.target&&e.target.tagName==='CANVAS'))return;
+    if(performance.now()-dt>700)return;
+    if(Math.hypot(e.clientX-dx,e.clientY-dy)>8)return;
+    var u=window.__hoverPhoto;
+    if(u)openViewer(u);else window.__scatterAt=performance.now();
+  },true);
+  document.addEventListener('pointercancel',function(){window.__mouseGesture=false;},true);
+  window.addEventListener('blur',function(){window.__mouseGesture=false;});
+})();
+</script>
+</body>
 </html>
