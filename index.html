@@ -1,90 +1,44 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>璀璨圣诞树 · Merry Christmas</title>
-<meta name="description" content="金色粒子圣诞树，拖动旋转、缩放展开照片。" />
-<link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-<canvas id="scene" aria-label="金色粒子圣诞树"></canvas>
-<div class="vignette" aria-hidden="true"></div>
-<div class="aurora" aria-hidden="true"></div>
-
-<header class="hero">
-  <small>A LITTLE MAGIC, JUST FOR YOU</small>
-  <h1>Merry Christmas</h1>
-  <p class="sub">愿今夜的星光，落在你身旁。</p>
-  <div id="countdown" class="countdown">距圣诞节 · · ·</div>
-  <div id="greeting" class="greeting"></div>
-</header>
-
-<div id="hint" class="hint">拖动旋转 · 滚轮 / 双指缩放 · 放大后点击照片查看</div>
-
-<nav class="dock" aria-label="场景控制">
-  <button id="btnSnow" class="chip" aria-pressed="true">❄ 飘雪</button>
-  <button id="btnRotate" class="chip" aria-pressed="true">↻ 旋转</button>
-  <button id="btnMusic" class="chip" aria-pressed="false">♫ 音乐</button>
-  <button id="btnWish" class="chip">♡ 写下心愿</button>
-</nav>
-
-<footer class="credit">拖动旋转 · 滚轮或双指放大展开照片 · 点击照片查看</footer>
-
-<div id="loader" class="loader">
-  <div class="loader-inner">
-    <div class="tree-mark" aria-hidden="true">
-      <span></span><span></span><span></span><span></span><span></span>
-    </div>
-    <p class="loader-title">点亮星光</p>
-    <p id="loaderText" class="loader-sub">载入回忆 0 / 0</p>
-    <div class="bar"><i id="loaderBar"></i></div>
-  </div>
-</div>
-
-<dialog id="wishDialog" class="panel">
-  <form method="dialog" id="wishForm">
-    <h2>寄给冬天的心愿</h2>
-    <p class="panel-sub">让这棵树替你珍藏一句祝福</p>
-    <textarea id="wishInput" maxlength="80" rows="3" placeholder="写下一句想说的话…"></textarea>
-    <div class="panel-actions">
-      <button value="cancel" class="ghost">取消</button>
-      <button value="save" class="primary">点亮心愿 ✧</button>
-    </div>
-  </form>
-</dialog>
-
-<dialog id="lightbox" class="lightbox">
-  <div class="lightbox-inner">
-    <button class="close-btn lb-close" data-close="lightbox" aria-label="关闭">✕</button>
-    <img id="lbImg" alt="回忆照片" />
-    <div class="lb-bar">
-      <button id="lbPrev" class="round-btn" aria-label="上一张">‹</button>
-      <span id="lbCount" class="lb-count">1 / 1</span>
-      <button id="lbNext" class="round-btn" aria-label="下一张">›</button>
-    </div>
-  </div>
-</dialog>
-
-<script>
-  window.addEventListener('error', function (e) {
-    if (window.__fatalShown) return;
-    var t = document.getElementById('loaderText');
-    if (!t) return;
-    if (e && e.target && e.target.tagName === 'SCRIPT') {
-      t.textContent = '加载失败：脚本无法加载';
-      return;
-    }
-    if (e && e.message) t.textContent = '加载失败：' + e.message;
-  }, true);
-  window.addEventListener('unhandledrejection', function (e) {
-    if (window.__fatalShown) return;
-    var t = document.getElementById('loaderText');
-    if (!t) return;
-    var r = e.reason;
-    t.textContent = '加载失败：' + ((r && r.message) || r || '未知错误');
-  });
-</script>
-<script src="js/bundle.js" onerror="document.getElementById('loaderText').textContent='加载失败：js/bundle.js 无法加载'"></script>
-</body>
+  <!-- Based on https://github.com/nobody-r/christmas-tree (upstream has no LICENSE file). Placeholder photos replaced with personal photos. -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>璀璨圣诞树 · Merry Christmas</title>
+    <!-- Tailwind CSS is bundled locally via @tailwindcss/vite; MediaPipe scripts load on-demand -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500;1,700&family=Noto+Serif+SC:wght@400;600;700&family=Cormorant+Garamond:ital@1&display=swap" rel="stylesheet">
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background-color: #070b18;
+        font-family: 'Noto Serif SC', 'Playfair Display', serif;
+      }
+      canvas {
+        touch-action: none;
+      }
+      .font-display {
+        font-family: 'Playfair Display', 'Noto Serif SC', serif;
+      }
+      .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+      .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
+      .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,217,138,0.35); border-radius: 2px; }
+      @keyframes shimmer {
+        0%, 100% { opacity: 0.55; }
+        50% { opacity: 1; }
+      }
+      .shimmer { animation: shimmer 3s ease-in-out infinite; }
+      @keyframes snowfall-gradient {
+        0% { background-position: 0% 0%; }
+        100% { background-position: 0% 200%; }
+      }
+    </style>
+    <script type="module" crossorigin src="./assets/index-christmas-2026.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BeE7YxDE.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
 </html>
