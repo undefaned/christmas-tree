@@ -26,7 +26,8 @@ let renderer;
 try {
   renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
 } catch (err) {
-  $('loaderText').textContent = '当前浏览器无法启用 WebGL';
+  window.__fatalShown = true;
+  $('loaderText').textContent = '当前浏览器无法启用 WebGL（需要 WebGL2，建议 Chrome / Edge / Safari 15+）';
   throw err;
 }
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, dprCap));

@@ -6,14 +6,6 @@
 <title>璀璨圣诞树 · Merry Christmas</title>
 <meta name="description" content="金色粒子圣诞树，拖动旋转、缩放展开照片。" />
 <link rel="stylesheet" href="styles.css" />
-<script type="importmap">
-{
-  "imports": {
-    "three": "./vendor/three/three.module.js",
-    "three/addons/": "./vendor/three/addons/"
-  }
-}
-</script>
 </head>
 <body>
 <canvas id="scene" aria-label="金色粒子圣诞树"></canvas>
@@ -74,6 +66,25 @@
   </div>
 </dialog>
 
-<script type="module" src="js/main.js"></script>
+<script>
+  window.addEventListener('error', function (e) {
+    if (window.__fatalShown) return;
+    var t = document.getElementById('loaderText');
+    if (!t) return;
+    if (e && e.target && e.target.tagName === 'SCRIPT') {
+      t.textContent = '加载失败：脚本无法加载';
+      return;
+    }
+    if (e && e.message) t.textContent = '加载失败：' + e.message;
+  }, true);
+  window.addEventListener('unhandledrejection', function (e) {
+    if (window.__fatalShown) return;
+    var t = document.getElementById('loaderText');
+    if (!t) return;
+    var r = e.reason;
+    t.textContent = '加载失败：' + ((r && r.message) || r || '未知错误');
+  });
+</script>
+<script src="js/bundle.js" onerror="document.getElementById('loaderText').textContent='加载失败：js/bundle.js 无法加载'"></script>
 </body>
 </html>
