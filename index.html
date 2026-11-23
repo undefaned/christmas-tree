@@ -88,10 +88,38 @@
     if(performance.now()-dt>700)return;
     if(Math.hypot(e.clientX-dx,e.clientY-dy)>8)return;
     var u=window.__hoverPhoto;
-    if(u)openViewer(u);else window.__scatterAt=performance.now();
+    if(u)openViewer(u);
   },true);
   document.addEventListener('pointercancel',function(){window.__mouseGesture=false;},true);
   window.addEventListener('blur',function(){window.__mouseGesture=false;});
+
+  // mouse wheel zooms (OrbitControls) and scatters the photos/particles
+  document.addEventListener('wheel',function(e){
+    if(e.target&&e.target.tagName==='CANVAS') window.__scatterAt=performance.now();
+  },{capture:true,passive:true});
+
+  // two-finger pinch also scatters; the app's OrbitControls handles the zoom
+  var pts=new Map(),lastPinch=0;
+  document.addEventListener('pointerdown',function(e){
+    if(e.pointerType!=='mouse') pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  },true);
+  document.addEventListener('pointermove',function(e){
+    if(!pts.has(e.pointerId))return;
+    pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(pts.size===2){
+      var a=Array.from(pts.values()),d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);
+      if(lastPinch&&Math.abs(d-lastPinch)>4) window.__scatterAt=performance.now();
+      lastPinch=d;
+    }
+  },true);
+  document.addEventListener('pointerup',function(e){
+    pts.delete(e.pointerId);
+    if(pts.size<2) lastPinch=0;
+  },true);
+  document.addEventListener('pointercancel',function(e){
+    pts.delete(e.pointerId);
+    if(pts.size<2) lastPinch=0;
+  },true);
 })();
 </script>
 </body>
