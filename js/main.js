@@ -42,7 +42,7 @@ scene.fog = new THREE.FogExp2(0x05070f, 0.00032);
 
 const FOV = 42;
 const camera = new THREE.PerspectiveCamera(FOV, window.innerWidth / window.innerHeight, 1, 7000);
-const target = new THREE.Vector3(0, 50, 0);
+const target = new THREE.Vector3(0, 60, 0);
 
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
@@ -197,6 +197,7 @@ function makeCard(i, texture) {
     toneMapped: false,
     transparent: true,
   });
+  imgMat.color.setScalar(0.55);
   const img = new THREE.Mesh(new THREE.PlaneGeometry(CARD_W * 1.04, CARD_H * 1.04), imgMat);
   img.userData.index = i;
 
@@ -207,6 +208,7 @@ function makeCard(i, texture) {
     side: THREE.DoubleSide,
     toneMapped: false,
   });
+  frameMat.color.setScalar(0.72);
   const frame = new THREE.Mesh(new THREE.PlaneGeometry(CARD_W * 1.14, CARD_H * 1.14), frameMat);
   frame.position.z = 0.5;
   frame.userData.index = i;
@@ -260,11 +262,11 @@ function stepLightbox(delta) {
 /* camera + input                                                      */
 /* ------------------------------------------------------------------ */
 const MIN_R = 860;
-const MAX_R = 1320;
+const MAX_R = 1300;
 let theta = 0.42;
 let phi = 1.42;
-let radius = 1120;
-let targetRadius = 1120;
+let radius = 1040;
+let targetRadius = 1040;
 let autoRotate = true;
 let lastInteraction = 0;
 let elapsed = 0;
@@ -273,7 +275,7 @@ let cardFit = 1;
 
 const pointers = new Map();
 let pinchStartDist = 0;
-let pinchStartRadius = 1120;
+let pinchStartRadius = 1040;
 let dragMoved = 0;
 let downId = null;
 let downAt = 0;
@@ -396,7 +398,7 @@ canvas.addEventListener('wheel', (e) => {
 }, { passive: false });
 
 canvas.addEventListener('dblclick', () => {
-  targetRadius = targetRadius > 1000 ? MIN_R : 1120;
+  targetRadius = targetRadius > 980 ? MIN_R : 1040;
   lastInteraction = elapsed;
 });
 
@@ -549,7 +551,7 @@ function animate() {
   if (autoRotate && elapsed - lastInteraction > 2.2) theta += dt * 0.05;
 
   radius += (targetRadius - radius) * Math.min(1, dt * 4.5);
-  reveal = smoothstep(1090, 900, radius);
+  reveal = smoothstep(1010, 880, radius);
 
   const sp = Math.sin(phi);
   camera.position.set(

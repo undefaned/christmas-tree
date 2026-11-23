@@ -448,6 +448,7 @@ function buildStar(group) {
 export function createTree(scene, opts = {}) {
   const quality = opts.quality ?? 1;
   const group = new THREE.Group();
+  group.scale.setScalar(1.15);
   scene.add(group);
 
   const foliage = buildPoints(buildFoliage(quality), 0.9);
