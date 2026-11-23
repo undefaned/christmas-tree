@@ -254,6 +254,10 @@ html, body {
 
 /* ---------- dialogs ---------- */
 dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  max-height: 94vh;
   color: var(--cream);
   border: none;
   padding: 0;
@@ -350,69 +354,6 @@ dialog[open] { animation: pop 0.32s cubic-bezier(0.2, 0.9, 0.25, 1); }
 }
 .close-btn:hover { background: rgba(90, 68, 38, 0.55); border-color: rgba(255, 217, 138, 0.6); }
 
-/* ---------- album ---------- */
-.album-panel {
-  width: min(1120px, 93vw);
-  height: min(84vh, 900px);
-  display: flex;
-  flex-direction: column;
-  padding: 26px 26px 18px;
-}
-.album-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 0 4px 16px;
-  border-bottom: 1px solid rgba(232, 196, 131, 0.14);
-}
-.album-grid {
-  margin-top: 16px;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
-  gap: 10px;
-  overflow-y: auto;
-  padding: 2px 6px 14px 2px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(232, 196, 131, 0.3) transparent;
-}
-.album-grid::-webkit-scrollbar { width: 5px; }
-.album-grid::-webkit-scrollbar-thumb { background: rgba(232, 196, 131, 0.3); border-radius: 3px; }
-.album-grid button {
-  position: relative;
-  padding: 0;
-  border: 1px solid rgba(232, 196, 131, 0.16);
-  border-radius: 10px;
-  overflow: hidden;
-  background: #0a1120;
-  cursor: pointer;
-  aspect-ratio: 3 / 4;
-  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-}
-.album-grid button:hover {
-  transform: translateY(-3px);
-  border-color: rgba(255, 217, 138, 0.6);
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5);
-}
-.album-grid img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.album-grid span {
-  position: absolute;
-  left: 8px;
-  bottom: 6px;
-  font-family: var(--sans);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  color: rgba(255, 236, 200, 0.85);
-  text-shadow: 0 1px 4px #000;
-}
-
 /* ---------- lightbox ---------- */
 .lightbox {
   width: auto;
@@ -471,8 +412,6 @@ dialog[open] { animation: pop 0.32s cubic-bezier(0.2, 0.9, 0.25, 1); }
   .chip { padding: 9px 13px; font-size: 12px; }
   .hint { bottom: calc(max(18px, 2.6vh) + 52px); font-size: 10px; letter-spacing: 0.1em; }
   .credit { display: none; }
-  .album-panel { padding: 20px 14px 12px; }
-  .album-grid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .aurora { animation: none; }

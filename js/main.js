@@ -230,37 +230,12 @@ async function buildCards() {
   const textures = await Promise.all(photoPaths.map((p) => loadTexture(thumbOf(p))));
   // build in a random-ish order so the tree fills evenly as they pop in
   for (let i = 0; i < textures.length; i++) makeCard(i, textures[i]);
-  $('albumCount').textContent = String(PHOTOS);
-  buildAlbum();
 }
 
 /* ------------------------------------------------------------------ */
-/* album + lightbox                                                    */
+/* lightbox                                                            */
 /* ------------------------------------------------------------------ */
-const albumGrid = $('albumGrid');
 let lbIndex = 0;
-
-function buildAlbum() {
-  const frag = document.createDocumentFragment();
-  photoPaths.forEach((src, i) => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.setAttribute('aria-label', `第 ${i + 1} 张照片`);
-    const img = document.createElement('img');
-    img.loading = 'lazy';
-    img.src = thumbOf(src);
-    img.alt = '';
-    const num = document.createElement('span');
-    num.textContent = String(i + 1).padStart(2, '0');
-    btn.append(img, num);
-    btn.addEventListener('click', () => {
-      $('albumDialog').close();
-      openLightbox(i);
-    });
-    frag.appendChild(btn);
-  });
-  albumGrid.appendChild(frag);
-}
 
 function openLightbox(i) {
   lbIndex = (i + PHOTOS) % PHOTOS;
@@ -441,7 +416,6 @@ window.addEventListener('keydown', (e) => {
 const btnSnow = $('btnSnow');
 const btnRotate = $('btnRotate');
 const btnMusic = $('btnMusic');
-const btnAlbum = $('btnAlbum');
 const btnWish = $('btnWish');
 const hint = $('hint');
 const hero = document.querySelector('.hero');
@@ -471,10 +445,6 @@ btnMusic.addEventListener('click', async () => {
   } catch {
     btnMusic.textContent = '♫ 音乐不可用';
   }
-});
-
-btnAlbum.addEventListener('click', () => {
-  $('albumDialog').showModal();
 });
 
 btnWish.addEventListener('click', () => {

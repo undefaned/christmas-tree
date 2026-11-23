@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>璀璨圣诞树 · Merry Christmas</title>
-<meta name="description" content="金色粒子圣诞树，拖动旋转、缩放展开回忆相册。" />
+<meta name="description" content="金色粒子圣诞树，拖动旋转、缩放展开照片。" />
 <link rel="stylesheet" href="styles.css" />
 <script type="importmap">
 {
@@ -34,7 +34,6 @@
   <button id="btnSnow" class="chip" aria-pressed="true">❄ 飘雪</button>
   <button id="btnRotate" class="chip" aria-pressed="true">↻ 旋转</button>
   <button id="btnMusic" class="chip" aria-pressed="false">♫ 音乐</button>
-  <button id="btnAlbum" class="chip">▦ 回忆相册</button>
   <button id="btnWish" class="chip">♡ 写下心愿</button>
 </nav>
 
@@ -61,17 +60,6 @@
       <button value="save" class="primary">点亮心愿 ✧</button>
     </div>
   </form>
-</dialog>
-
-<dialog id="albumDialog" class="panel album-panel">
-  <div class="album-head">
-    <div>
-      <h2>回忆相册</h2>
-      <p class="panel-sub">共 <span id="albumCount">0</span> 张 · 点击任意一张查看大图</p>
-    </div>
-    <button class="close-btn" data-close="albumDialog" aria-label="关闭">✕</button>
-  </div>
-  <div id="albumGrid" class="album-grid"></div>
 </dialog>
 
 <dialog id="lightbox" class="lightbox">
